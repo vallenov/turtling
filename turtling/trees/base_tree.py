@@ -45,7 +45,6 @@ class Tree:
             self.next_step(k)
         self.draw()
         turtle.update()
-        #turtle.exitonclick()
 
     def next_step(self, iteration):
         self.thick = int(iteration * 1.5)
@@ -122,7 +121,8 @@ class Tree:
         if random.randint(0, 10) > 4:
             turtle.forward(self.dl)
 
-    def add_random_angle(self):
+    @staticmethod
+    def add_random_angle():
         ug = random.randint(-30, 30)
         if ug < 0:
             turtle.left(ug - 25)
