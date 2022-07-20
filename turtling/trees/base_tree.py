@@ -1,10 +1,11 @@
 import turtle
-from random import randint
+import random
 
 
 class Tree:
     
-    def __init__(self):
+    def __init__(self, position: tuple):
+        self.position = position
         self.axiom = "22220"
         self.axiom_tmp = ""
         self.itr = 9
@@ -31,20 +32,22 @@ class Tree:
             '0': self.draw_leaf
         }
     
-    def run(self):
+    def grow_up(self):
         turtle.hideturtle()
         turtle.tracer(0)
         turtle.penup()
-        turtle.setposition(0, -300)
+        turtle.setposition(self.position)
+        turtle.setheading(0)
         turtle.left(90)
         turtle.pendown()
         
         for k in range(self.itr):
-            self.grow_up(k)
-            self.draw()
-        turtle.exitonclick()
+            self.next_step(k)
+        self.draw()
+        turtle.update()
+        #turtle.exitonclick()
 
-    def grow_up(self, iteration):
+    def next_step(self, iteration):
         self.thick = int(iteration * 1.5)
         turtle.pensize(self.thick)
         for ch in self.axiom:
@@ -54,12 +57,10 @@ class Tree:
         self.axiom_tmp = ""
 
     def draw(self):
-        turtle.clear()
         for ch in self.axiom:
             f = self.draw_map.get(ch, self.draw_branch)
             f()
-        turtle.setposition(0, -300)
-        turtle.update()
+        turtle.setposition(self.position)
 
     def grow_other(self, ch):
         self.axiom_tmp += ch
@@ -100,7 +101,7 @@ class Tree:
     def draw_leaf(self):
         self.stc.append(turtle.pensize())
         turtle.pensize(4)
-        r = randint(0, 10)
+        r = random.randint(0, 10)
         if r < 3:
             turtle.pencolor('#009900')
         elif r > 6:
@@ -112,24 +113,43 @@ class Tree:
         turtle.pencolor('#000000')
 
     def random_leaf(self):
-        if randint(0, 100) < 7 and self.level > 2:
+        if random.randint(0, 100) < 7 and self.level > 2:
             self.axiom_tmp += '3[^30]'
         else:
             self.axiom_tmp += '2'
 
     def draw_branch(self):
-        if randint(0, 10) > 4:
+        if random.randint(0, 10) > 4:
             turtle.forward(self.dl)
 
     def add_random_angle(self):
-        ug = randint(-30, 30)
+        ug = random.randint(-30, 30)
         if ug < 0:
             turtle.left(ug - 25)
         else:
             turtle.left(ug + 25)
 
     def left_angle(self):
-        turtle.left(self.angl - randint(-13, 13))
+        turtle.left(self.angl - random.randint(-13, 13))
 
     def right_angle(self):
-        turtle.right(self.angl - randint(-13, 13))
+        turtle.right(self.angl - random.randint(-13, 13))
+
+
+class Forrest:
+
+    def __init__(self):
+        self.position_x_list = list(range(-500, 500))
+        self.position_y_list = list(range(-500, 100))
+
+    def get_new_tree_position(self):
+        x = random.choice(self.position_x_list)
+        y = random.choice(self.position_y_list)
+        pos = (self.position_x_list.pop(self.position_x_list.index(x)),
+               self.position_y_list.pop(self.position_y_list.index(y)))
+        return pos
+
+    def grow_up(self):
+        while True:
+            tree = Tree(self.get_new_tree_position())
+            tree.grow_up()
